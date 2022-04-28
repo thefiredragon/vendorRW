@@ -1,0 +1,22 @@
+#!/sbin/sh
+
+OUTFD=/proc/self/fd/$2;
+
+ZIPFILE="$3";
+DIR=$(dirname "$ZIPFILE");
+
+INSTALLDIR=/data/local/tmp/
+WORKDIR=/data/local/tmp/vendorRW_1.0
+rm -rf $INSTALLDIR
+mkdir -p $INSTALLDIR
+
+unzip -o "$ZIPFILE" "vendorRW_1.0/*"  -d $INSTALLDIR
+
+# Source helper script and mount the partitions
+. $WORKDIR/tools/utils.sh
+
+# Apply the update now that the partitions have been mounted
+. $WORKDIR/vendorRW.sh
+
+
+exit 0

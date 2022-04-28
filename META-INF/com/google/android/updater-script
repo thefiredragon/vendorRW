@@ -1,0 +1,3 @@
+# Dummy file, needed in case of EDIFY script; update-binary is a shell script.
+getprop("ro.product.manufacturer") == "Samsung" || abort("E3004: This package is for \"samsung\" devices; this is a \"" + getprop("ro.product.manufacturer") + "\".");
+
