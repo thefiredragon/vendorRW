@@ -40,6 +40,9 @@ os=$(getprop ro.build.version.release)
 major=${os%%.*}
 bl=$(getprop ro.boot.bootloader)
 dp=$(getprop ro.boot.dynamic_partitions)
+vendorPath=`ls -l /dev/block/mapper/vendor 2>/dev/null | awk '{print $NF}'`
+blkid=$($toolsdir/toybox blkid $vendorPath | egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}' -o)
+
 
 # Firmware version starts at either 8th or 9th character, depending on length
 # of bootloader string (12 or 13).
@@ -71,14 +74,14 @@ ui_print "$app: The environment appears to be Android $major.\n\n"
 umount $mntvpath > /dev/null 2>&1
 umount $mnttmppath > /dev/null 2>&1
 
+ui_print "$app: Dumped UUID from $vendorPath UUID=$blkid \n\n"
 ui_print "$app: Create new vendor image without write protection...\n"
-ui_print "$app: Create new vendor image without write protection... \n\n"
 
 ## Create a new rw f2fs image and allocate more space for copy, looks like compression is not working.
 ## Temp image is much larger instead of the original one, so we need later to create a new super img to resize all partitions accurately.
 ## Also we need to find a way to shrink the filesystem and image to save space 
-truncate -s 2500M $tmpimage
-make_f2fs -l vendor -O extra_attr,inode_checksum,sb_checksum,compression -U f07fb305-46c2-422f-8284-6f04ea82b7cc $tmpimage -f > /dev/null 2>&1 
+truncate -s 2600M $tmpimage || { echo 'create image failed' ; exit 1; }
+make_f2fs -l vendor -O extra_attr,inode_checksum,sb_checksum,compression -U $blkid $tmpimage -f > /dev/null 2>&1  || { echo 'create image failed' ; exit 1; }
 
 ui_print "$app: Mounting vendor images...\n"
 
@@ -95,7 +98,7 @@ ui_print "$app: Unmounting and check new vendor image...\n"
 
 umount $mntvpath
 umount $mnttmppath
-resize.f2fs $tmpimage > /dev/null 2>&1 || { echo 'resize failed' ; exit 1; }
+#resize.f2fs $tmpimage > /dev/null 2>&1 || { echo 'resize failed' ; exit 1; }
 fsck.f2fs -f $tmpimage > /dev/null 2>&1  || { echo 'fsck failed' ; exit 1; }
 
 echo " "
