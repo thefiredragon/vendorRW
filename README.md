@@ -21,3 +21,9 @@ dont interrupt the this process or you need to flash stock image via odin
 
 after reboot try multidisabler to remove samsungs protection
 ```
+
+## Credits
+
+```
+Main source from lebigmac from xda
+```

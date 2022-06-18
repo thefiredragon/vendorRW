@@ -18,7 +18,7 @@ toolsdir="$LOC/tools"
 
 ui_print " --------------------------------------------------\n"
 ui_print "| VendorRW automated script by thefiredragon,     |\n"
-ui_print "| Ian Macdonald and Afaneh                        |\n"
+ui_print "| Ian Macdonald, Afaneh and lebigmac              |\n"
 ui_print "| This script only support f2fs filesystems       |\n"
 ui_print "|-------------------------------------------------|\n"
 ui_print "|-------------------------------------------------|\n"
